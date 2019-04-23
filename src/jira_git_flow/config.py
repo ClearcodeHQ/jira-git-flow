@@ -8,7 +8,8 @@ DATA_FILE = BASE_DIRECTORY + 'data.json'
 
 credentials = {
     'username': 'jira_username',
-    'password': 'jira_password'
+    'email': 'jira_email',
+    'token': 'jira_token'
 }
 
 config = {
@@ -108,7 +109,8 @@ else:
 URL = config['url']
 PROJECT = config['project']
 USERNAME = credentials['username']
-PASSWORD = credentials['password']
+EMAIL = credentials['email']
+TOKEN = credentials['token']
 ACTIONS = config['actions']
 STATUSES = config['statuses']
 BADGES = config['badges']

@@ -5,8 +5,8 @@ from jira import JIRA, JIRAError
 class Jira(object):
     """JIRA objects and operations."""
 
-    def __init__(self, url, username, password, project, max_results):
-        self.jira = JIRA(url, basic_auth=(username, password))
+    def __init__(self, url, username, token, project, max_results):
+        self.jira = JIRA(url, basic_auth=(username, token))
         self.project = project
         self.max_results = max_results
 
