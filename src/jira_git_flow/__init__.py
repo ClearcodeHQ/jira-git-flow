@@ -203,15 +203,9 @@ def _assign_issue(jira, jira_issue, action):
         jira.assign_issue(jira_issue, None)
 
 
-def _get_transition(type, transition):
-    if type in config.TRANSITIONS:
-        return config.TRANSITIONS[type][transition]
-    return config.TRANSITIONS['default'][transition]
-
-
 def connect():
     """Connect to JIRA and return Jira instance."""
-    return Jira(config.URL, config.USERNAME, config.PASSWORD, config.PROJECT, config.MAX_RESULTS)
+    return Jira(config.URL, config.EMAIL, config.TOKEN, config.PROJECT, config.MAX_RESULTS)
 
 
 if __name__ == "__main__":
