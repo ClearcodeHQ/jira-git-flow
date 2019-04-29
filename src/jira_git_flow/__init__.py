@@ -80,8 +80,9 @@ def publish():
 @git_flow.command()
 def finish():
     """Finish story"""
-    story = cli.choose_by_types('story')[0]
-    storage.finish(story)
+    stories = cli.choose_by_types('story')
+    for story in stories:
+        storage.finish(story)
 
 
 @git_flow.command()
