@@ -59,8 +59,9 @@ def review(skip_pr):
 
     if config.CREATE_PULL_REQUEST and not skip_pr:
         for issue in issues:
-            branch = generate_branch_name(issue)
-            git.create_pull_request(branch)
+            if issue.type != 'story':
+                branch = generate_branch_name(issue)
+                git.create_pull_request(branch)
 
     jira = connect()
     for issue in issues:
