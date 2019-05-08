@@ -84,7 +84,8 @@ config = {
             'name': 'BugFix Sub-task',
             'prefix': 'b/'
         }
-    }
+    },
+    'create_pull_request': True
 }
 
 if not os.path.exists(BASE_DIRECTORY):
@@ -115,4 +116,5 @@ ACTIONS = config['actions']
 STATUSES = config['statuses']
 BADGES = config['badges']
 ISSUE_TYPES = config['types']
+CREATE_PULL_REQUEST = config['create_pull_request']
 MAX_RESULTS = 100

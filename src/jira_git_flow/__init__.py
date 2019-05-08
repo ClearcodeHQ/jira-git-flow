@@ -51,9 +51,21 @@ def bug():
 
 
 @git_flow.command()
-def review():
+@click.option('-s', '--skip-pr', is_flag=True, default=False)
+def review(skip_pr):
     """Move issue to review"""
-    _change_status('review')
+    action = 'review'
+    issues = _get_issues_by_action(action)
+
+    if config.CREATE_PULL_REQUEST and not skip_pr:
+        for issue in issues:
+            if issue.type != 'story':
+                branch = generate_branch_name(issue)
+                git.create_pull_request(branch)
+
+    jira = connect()
+    for issue in issues:
+        _make_action(jira, issue, action)
 
 
 @git_flow.command()
@@ -163,9 +175,14 @@ def get_issue_from_jira(is_key, keyword, type):
     return JiraIssue.from_issue(issue)
 
 
-def _change_status(action):
+def _get_issues_by_action(action):
     status = _get_action_status(action)
     issues = cli.choose_by_status(status)
+    return issues
+
+
+def _change_status(action, issues=None):
+    issues = _get_issues_by_action(action)
     jira = connect()
     for issue in issues:
         _make_action(jira, issue, action)
