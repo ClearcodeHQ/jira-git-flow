@@ -6,7 +6,7 @@ from urllib.parse import quote_plus
 import click
 from subprocess import check_output
 
-REMOTE_URL_REGEXP = '(https://|git@)([^:/]*)(:|/)(.*)\\.git'
+REMOTE_URL_REGEXP = '(https://|git@)([^:/]*)(:|/)([^\\.]*)(git)?'
 
 GIT_PROVIDERS = {
     'bitbucket.org': {
