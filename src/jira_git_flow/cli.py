@@ -1,5 +1,7 @@
 """Cli module"""
 import click
+from PyInquirer import style_from_dict, Token, prompt, Separator
+
 from jira_git_flow import config
 from jira_git_flow.models import JiraIssue
 from jira_git_flow.storage import storage
@@ -203,3 +205,75 @@ def working_on_story(story):
     if current_story:
         return story == current_story
     return False
+
+
+# INTERACTIVE
+def interactive_choose_by_status(status):
+    return choose_interactive(lambda issue: issue.status == status)
+
+
+def choose_interactive(filter_function=lambda issue: True):
+    stories = storage.get_stories()
+
+    style = style_from_dict({
+        Token.Separator: '#6C6C6C',
+        Token.QuestionMark: '#FF9D00 bold',
+        # Token.Selected: '',  # default
+        Token.Selected: '#5F819D',
+        Token.Pointer: '#FF9D00 bold',
+        Token.Instruction: '',  # default
+        Token.Answer: '#5F819D bold',
+        Token.Question: '',
+    })
+
+    pointer_index = get_pointer_index(stories)
+
+    questions = [
+        {
+            'type': 'checkbox',
+            'qmark': '?',
+            'message': 'Choose issues',
+            'name': 'issues',
+            'choices': convert_stories_to_choices(stories, filter_function),
+            'validate': lambda answer: 'You must choose at least one topping.' if len(answer) == 0 else True
+        }
+    ]
+
+    answers = prompt(questions, style=style)
+    print(answers)
+
+
+def convert_stories_to_choices(stories, filter_function):
+    choices = []
+    for story in stories:
+        choices.append(Separator(story.full_name))
+        for subtask in story.subtasks:
+            subtask_choice = {
+                'name': subtask.full_name
+            }
+            if not filter_function(subtask):
+                subtask_choice['disabled'] = True
+            choices.append(subtask_choice)
+    return choices
+
+
+def get_pointer_index(stories):
+    flatten_issues = get_flatten_issues(stories)
+    current_issue = storage.get_current_issue()
+    current_story = storage.get_current_story()
+
+    for current in [current_issue, current_story]:
+        if current:
+            try:
+                return flatten_issues.index(current)
+            except ValueError:
+                pass
+    return 0
+
+
+def get_flatten_issues(stories):
+    flatten_issues = []
+    for story in stories:
+        flatten_issues.append(story)
+        flatten_issues.extend(story.subtasks)
+    return flatten_issues

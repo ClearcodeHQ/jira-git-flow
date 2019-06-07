@@ -55,25 +55,27 @@ def bug():
 def review(skip_pr):
     """Move issue to review"""
     action = 'review'
-    issues = _get_issues_by_action(action)
+    cli.interactive_choose_by_status('in_progress')
+    # issues = _get_issues_by_action(action)
 
-    if config.CREATE_PULL_REQUEST:
-        for issue in issues:
-            skip_issue_pr = skip_pr or (issue.type == 'story')
-            if not skip_issue_pr:
-                branch = generate_branch_name(issue)
-                git.push(branch)
-                git.create_pull_request(branch)
+    # if config.CREATE_PULL_REQUEST:
+    #     for issue in issues:
+    #         skip_issue_pr = skip_pr or (issue.type == 'story')
+    #         if not skip_issue_pr:
+    #             branch = generate_branch_name(issue)
+    #             git.push(branch)
+    #             git.create_pull_request(branch)
 
-    jira = connect()
-    for issue in issues:
-        _make_action(jira, issue, action)
+    # jira = connect()
+    # for issue in issues:
+    #     _make_action(jira, issue, action)
 
 
 @git_flow.command()
 def resolve():
     """Resolve issue"""
-    _change_status('resolve')
+    # _change_status('resolve')
+    cli.interactive_choose_by_status('in_review')
 
 
 @git_flow.command()

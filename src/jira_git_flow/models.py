@@ -10,6 +10,7 @@ class JiraIssue(object):
         self.type = type
         self.status = status
         self.subtasks = subtasks
+        self.full_name = self.__repr__()
 
     def __hash__(self):
         return self.key.split('-')[1]
