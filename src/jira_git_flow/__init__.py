@@ -55,27 +55,25 @@ def bug():
 def review(skip_pr):
     """Move issue to review"""
     action = 'review'
-    cli.interactive_choose_by_status('in_progress')
-    # issues = _get_issues_by_action(action)
+    issues = _get_issues_by_action(action)
 
-    # if config.CREATE_PULL_REQUEST:
-    #     for issue in issues:
-    #         skip_issue_pr = skip_pr or (issue.type == 'story')
-    #         if not skip_issue_pr:
-    #             branch = generate_branch_name(issue)
-    #             git.push(branch)
-    #             git.create_pull_request(branch)
+    if config.CREATE_PULL_REQUEST:
+        for issue in issues:
+            skip_issue_pr = skip_pr or (issue.type == 'story')
+            if not skip_issue_pr:
+                branch = generate_branch_name(issue)
+                git.push(branch)
+                git.create_pull_request(branch)
 
-    # jira = connect()
-    # for issue in issues:
-    #     _make_action(jira, issue, action)
+    jira = connect()
+    for issue in issues:
+        _make_action(jira, issue, action)
 
 
 @git_flow.command()
 def resolve():
     """Resolve issue"""
-    # _change_status('resolve')
-    cli.interactive_choose_by_status('in_review')
+    _change_status('resolve')
 
 
 @git_flow.command()
@@ -179,9 +177,12 @@ def get_issue_from_jira(is_key, keyword, type):
     return JiraIssue.from_issue(issue)
 
 
-def _get_issues_by_action(action):
+def _get_issues_by_action(action, interactive=True):
     status = _get_action_status(action)
-    issues = cli.choose_by_status(status)
+    if interactive:
+        issues = cli.interactive_choose_by_status(status)
+    else:
+        issues = cli.choose_by_status(status)
     return issues
 
 

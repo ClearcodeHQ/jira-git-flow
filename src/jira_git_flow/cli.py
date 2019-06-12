@@ -226,8 +226,6 @@ def choose_interactive(filter_function=lambda issue: True):
         Token.Question: '',
     })
 
-    pointer_index = get_pointer_index(stories)
-
     questions = [
         {
             'type': 'checkbox',
@@ -235,12 +233,15 @@ def choose_interactive(filter_function=lambda issue: True):
             'message': 'Choose issues',
             'name': 'issues',
             'choices': convert_stories_to_choices(stories, filter_function),
-            'validate': lambda answer: 'You must choose at least one topping.' if len(answer) == 0 else True
         }
     ]
 
     answers = prompt(questions, style=style)
-    print(answers)
+
+    if not 'issues' in answers:
+        return []
+
+    return answers['issues']
 
 
 def convert_stories_to_choices(stories, filter_function):
@@ -249,13 +250,25 @@ def convert_stories_to_choices(stories, filter_function):
         choices.append(Separator(story.full_name))
         for subtask in story.subtasks:
             subtask_choice = {
-                'name': subtask.full_name
+                'name': subtask.full_name,
+                'value': subtask
             }
             if not filter_function(subtask):
                 subtask_choice['disabled'] = True
             choices.append(subtask_choice)
+
+    if not has_active_choices(choices):
+        exit("There are no tasks with selected filters.")
+
     return choices
 
+
+def has_active_choices(choices):
+    for choice in choices:
+        if not isinstance(choice, Separator):
+            if not 'disabled' in choice:
+                return True
+    return False
 
 def get_pointer_index(stories):
     flatten_issues = get_flatten_issues(stories)
