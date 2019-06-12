@@ -226,6 +226,8 @@ def choose_interactive(filter_function=lambda issue: True):
         Token.Question: '',
     })
 
+    pointer_index = get_pointer_index(stories)
+
     questions = [
         {
             'type': 'checkbox',
@@ -236,7 +238,7 @@ def choose_interactive(filter_function=lambda issue: True):
         }
     ]
 
-    answers = prompt(questions, style=style)
+    answers = prompt(questions, style=style, pointer_index=pointer_index)
 
     if not 'issues' in answers:
         return []

@@ -14,12 +14,13 @@ def git_flow():
 
 
 @git_flow.command()
+@click.option('-i', '--interactive', is_flag=True, default=False)
 @click.option('-k', '--key', is_flag=True)
 @click.argument('keyword', nargs=-1, type=str)
-def workon(key, keyword):
+def workon(key, keyword, interactive):
     """Work on story/issue."""
     if not keyword:
-        issue = work_on_task()
+        issue = work_on_task(interactive)
     else:
         issue = get_issue_from_jira(key, keyword, 'story')
         storage.add_issue(issue)
@@ -116,9 +117,12 @@ def sync():
     storage.sync(remote_stories)
 
 
-def work_on_task():
+def work_on_task(interactive=False):
     """Work on task from local storage."""
-    issue = cli.choose_issue()
+    if interactive:
+        issue = cli.choose_interactive()[0]
+    else:
+        issue = cli.choose_issue()
     if issue.type == 'story':
         storage.work_on_story(issue)
     else:
