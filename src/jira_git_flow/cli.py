@@ -1,10 +1,10 @@
 """Cli module"""
 import click
-from PyInquirer import style_from_dict, Token, prompt, Separator
 
 from jira_git_flow import config
 from jira_git_flow.models import JiraIssue
 from jira_git_flow.storage import storage
+from jira_git_flow.layout import question
 
 
 ELEMENT_BRANCH = '├'
@@ -215,62 +215,43 @@ def interactive_choose_by_status(status):
 def choose_interactive(filter_function=lambda issue: True):
     stories = storage.get_stories()
 
-    style = style_from_dict({
-        Token.Separator: '#6C6C6C',
-        Token.QuestionMark: '#FF9D00 bold',
-        # Token.Selected: '',  # default
-        Token.Selected: '#5F819D',
-        Token.Pointer: '#FF9D00 bold',
-        Token.Instruction: '',  # default
-        Token.Answer: '#5F819D bold',
-        Token.Question: '',
-    })
-
     pointer_index = get_pointer_index(stories)
 
-    questions = [
-        {
-            'type': 'checkbox',
-            'qmark': '?',
-            'message': 'Choose issues',
-            'name': 'issues',
-            'choices': convert_stories_to_choices(stories, filter_function),
-        }
-    ]
+    answers = question(pointer_index=pointer_index,
+                       choices=convert_stories_to_choices(stories, filter_function))
 
-    answers = prompt(questions, style=style, pointer_index=pointer_index)
-
-    if not 'issues' in answers:
-        return []
-
-    return answers['issues']
+    return answers
 
 
 def convert_stories_to_choices(stories, filter_function):
     choices = []
-    for story in stories:
-        choices.append(Separator(story.full_name))
-        for subtask in story.subtasks:
-            subtask_choice = {
-                'name': subtask.full_name,
-                'value': subtask
-            }
-            if not filter_function(subtask):
-                subtask_choice['disabled'] = True
-            choices.append(subtask_choice)
 
-    if not has_active_choices(choices):
-        exit("There are no tasks with selected filters.")
+    def append(issue):
+        choice = {
+            'name': issue.full_name,
+            'value': issue
+        }
+        if not filter_function(issue):
+            choice['disabled'] = True
+        choices.append(choice)
+
+    for story in stories:
+        append(story)
+        for subtask in story.subtasks:
+            append(subtask)
+
+    # if not has_active_choices(choices):
+    #     exit("There are no tasks with selected filters.")
 
     return choices
 
 
 def has_active_choices(choices):
     for choice in choices:
-        if not isinstance(choice, Separator):
-            if not 'disabled' in choice:
-                return True
+        if 'disabled' not in choice:
+            return True
     return False
+
 
 def get_pointer_index(stories):
     flatten_issues = get_flatten_issues(stories)

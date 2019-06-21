@@ -192,9 +192,10 @@ def _get_issues_by_action(action, interactive=True):
 
 def _change_status(action, issues=None):
     issues = _get_issues_by_action(action)
-    jira = connect()
-    for issue in issues:
-        _make_action(jira, issue, action)
+    print(issues)
+    # jira = connect()
+    # for issue in issues:
+    #     _make_action(jira, issue, action)
 
 
 def _make_action(jira, issue, action_to_perform):
