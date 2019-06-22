@@ -1,1 +1,0 @@
-git+https://github.com/lichensky/PyInquirer.git@allow-set-pointer-index
