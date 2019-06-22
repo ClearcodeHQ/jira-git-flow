@@ -14,13 +14,12 @@ def git_flow():
 
 
 @git_flow.command()
-@click.option('-i', '--interactive', is_flag=True, default=False)
 @click.option('-k', '--key', is_flag=True)
 @click.argument('keyword', nargs=-1, type=str)
-def workon(key, keyword, interactive):
+def workon(key, keyword):
     """Work on story/issue."""
     if not keyword:
-        issue = work_on_task(interactive)
+        issue = work_on_task()
     else:
         issue = get_issue_from_jira(key, keyword, 'story')
         storage.add_issue(issue)
@@ -106,7 +105,7 @@ def status():
     click.echo("You're working on story: {}".format(storage.get_current_story()))
     click.echo("You're working on issue: {}".format(storage.get_current_issue()))
     click.echo("Stories:")
-    cli.render_stories()
+    cli.choose_interactive(filter_function=lambda issue: False)
 
 
 @git_flow.command()
@@ -117,12 +116,11 @@ def sync():
     storage.sync(remote_stories)
 
 
-def work_on_task(interactive=False):
+def work_on_task():
     """Work on task from local storage."""
-    if interactive:
-        issue = cli.choose_interactive()[0]
-    else:
-        issue = cli.choose_issue()
+    issue = cli.choose_issue()
+    if not issue:
+        exit('Select issue!')
     if issue.type == 'story':
         storage.work_on_story(issue)
     else:
@@ -181,21 +179,17 @@ def get_issue_from_jira(is_key, keyword, type):
     return JiraIssue.from_issue(issue)
 
 
-def _get_issues_by_action(action, interactive=True):
+def _get_issues_by_action(action):
     status = _get_action_status(action)
-    if interactive:
-        issues = cli.interactive_choose_by_status(status)
-    else:
-        issues = cli.choose_by_status(status)
+    issues = cli.choose_by_status(status)
     return issues
 
 
 def _change_status(action, issues=None):
     issues = _get_issues_by_action(action)
-    print(issues)
-    # jira = connect()
-    # for issue in issues:
-    #     _make_action(jira, issue, action)
+    jira = connect()
+    for issue in issues:
+        _make_action(jira, issue, action)
 
 
 def _make_action(jira, issue, action_to_perform):
