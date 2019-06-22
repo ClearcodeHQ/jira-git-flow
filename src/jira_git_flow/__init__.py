@@ -105,7 +105,7 @@ def status():
     click.echo("You're working on story: {}".format(storage.get_current_story()))
     click.echo("You're working on issue: {}".format(storage.get_current_issue()))
     click.echo("Stories:")
-    cli.render_stories()
+    cli.choose_interactive(filter_function=lambda issue: False)
 
 
 @git_flow.command()
@@ -119,6 +119,8 @@ def sync():
 def work_on_task():
     """Work on task from local storage."""
     issue = cli.choose_issue()
+    if not issue:
+        exit('Select issue!')
     if issue.type == 'story':
         storage.work_on_story(issue)
     else:

@@ -10,7 +10,8 @@ requirements = [
     'jira==2.0.0',  # JIRA client
     'wheel==0.29.0',  # adds support for building wheels
     'pbr>=3.0.0',  # jira dependency, https://github.com/pycontribs/jira/issues/501
-    'marshmallow==2.16.3'
+    'marshmallow==2.16.3',
+    'prompt-toolkit==2.0.9'
 ]
 
 requirements_tests = [
@@ -29,7 +30,7 @@ setup(
     name='jira-git-flow',
     version=package_version,
     author='Bartosz Lichenski',
-    description="Manage JIRA with git commands",
+    description="Manage JIRA with simple commands",
     package_dir={'': 'src'},
     packages=find_packages('src'),
     install_requires=requirements,
