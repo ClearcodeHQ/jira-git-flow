@@ -98,6 +98,13 @@ def finish():
     for story in stories:
         storage.finish(story)
 
+    if storage.get_current_story() is None and storage.get_stories():
+        click.echo('Choose story to work on.')
+        choices = cli.choose_by_types('story')
+        if choices:
+            story = choices[0]
+            storage.work_on_story(story)
+
 
 @git_flow.command()
 def status():
