@@ -145,8 +145,9 @@ class Storage(object):
         self._save_data()
 
     def finish(self, story):
+        if self.get_current_story() == story:
+            self.data[Keys.current_story] = None
         self.data[Keys.stories].remove(story)
-        self.data[Keys.current_story] = None
         self._save_data()
 
     def _get_parent(self, issue):

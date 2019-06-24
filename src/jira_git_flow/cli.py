@@ -371,6 +371,10 @@ def choose_by_status(status):
 
 def choose_interactive(filter_function=lambda issue: True):
     stories = storage.get_stories()
+
+    if not stories:
+        return []
+
     pointer_index = get_pointer_index(stories)
     choices = convert_stories_to_choices(stories, filter_function)
 
