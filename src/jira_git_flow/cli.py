@@ -257,6 +257,7 @@ def select_issue(choices, pointer_index):
         controller.toggle(controller.pointer_index)
         event.app.invalidate()
 
+    @bindings.add('j', eager=True)
     @bindings.add(Keys.Down, eager=True)
     def move_cursor_down(event):
         def _next():
@@ -267,6 +268,7 @@ def select_issue(choices, pointer_index):
             _next()
 
     @bindings.add(Keys.Up, eager=True)
+    @bindings.add('k', eager=True)
     def move_cursor_up(event):
         def _prev():
             controller.pointer_index = ((controller.pointer_index - 1) % controller.line_count)
