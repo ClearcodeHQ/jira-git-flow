@@ -8,7 +8,7 @@ requirements = [
     'click==6.7',  # CLI interface framework
     'bumpversion==0.5.3',  # version number management
     'jira==2.0.0',  # JIRA client
-    'wheel==0.29.0',  # adds support for building wheels
+    'wheel==0.38.1',  # adds support for building wheels
     'pbr>=3.0.0',  # jira dependency, https://github.com/pycontribs/jira/issues/501
     'marshmallow==2.16.3',
     'prompt-toolkit==2.0.9'
